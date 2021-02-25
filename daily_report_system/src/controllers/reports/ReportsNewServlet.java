@@ -29,9 +29,11 @@ public class ReportsNewServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
+    //新規レポートの作成画面処理
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request.setAttribute("_token", request.getSession().getId());
 
+        //新規レポート枠の作成
         Report r = new Report();
         r.setReport_date(new Date(System.currentTimeMillis()));
         request.setAttribute("report", r);

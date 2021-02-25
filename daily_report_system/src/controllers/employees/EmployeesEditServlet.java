@@ -31,10 +31,10 @@ public class EmployeesEditServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        //従業員情報の修正処理（入力内容の再セット）
         EntityManager em = DBUtil.createEntityManager();
-
         Employee e = em.find(Employee.class, Integer.parseInt(request.getParameter("id")));
-
         em.close();
 
         request.setAttribute("employee", e);

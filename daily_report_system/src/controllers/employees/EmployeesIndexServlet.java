@@ -31,23 +31,28 @@ public class EmployeesIndexServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
+    //従業員情報一覧画面の処理
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        EntityManager em = DBUtil.createEntityManager();
 
+        EntityManager em = DBUtil.createEntityManager();
         int page = 1;
         try{
             page = Integer.parseInt(request.getParameter("page"));
         } catch(NumberFormatException e) { }
+
+        //全従業員情報を纏めて入手（1ページの表示件数15に限定）
         List<Employee> employees = em.createNamedQuery("getAllEmployees", Employee.class)
                                      .setFirstResult(15 * (page - 1))
                                      .setMaxResults(15)
                                      .getResultList();
 
+        //表示する従業員情報の総件数を取得
         long employees_count = (long)em.createNamedQuery("getEmployeesCount", Long.class)
                                        .getSingleResult();
 
         em.close();
 
+        //JSPへデータの引き渡し
         request.setAttribute("employees", employees);
         request.setAttribute("employees_count", employees_count);
         request.setAttribute("page", page);
@@ -55,7 +60,6 @@ public class EmployeesIndexServlet extends HttpServlet {
             request.setAttribute("flush", request.getSession().getAttribute("flush"));
             request.getSession().removeAttribute("flush");
         }
-
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/employees/index.jsp");
         rd.forward(request, response);
     }

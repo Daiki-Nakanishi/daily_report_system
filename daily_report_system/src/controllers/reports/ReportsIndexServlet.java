@@ -31,25 +31,31 @@ public class ReportsIndexServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
+    //レポート一覧画面の表示処理
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         EntityManager em = DBUtil.createEntityManager();
 
+        //ページの設定
         int page;
         try{
             page = Integer.parseInt(request.getParameter("page"));
         } catch(Exception e) {
             page = 1;
         }
-        List<Report> reports = em.createNamedQuery("getAllReports", Report.class)
-                                  .setFirstResult(15 * (page - 1))
-                                  .setMaxResults(15)
-                                  .getResultList();
 
+        //全レポート情報を纏めて取得
+        List<Report> reports = em.createNamedQuery("getAllReports", Report.class)
+                .setFirstResult(15 * (page - 1))
+                .setMaxResults(15)
+                .getResultList();
+
+        //全レポート件数を取得
         long reports_count = (long)em.createNamedQuery("getReportsCount", Long.class)
-                                     .getSingleResult();
+                .getSingleResult();
 
         em.close();
 
+        //各データをセット
         request.setAttribute("reports", reports);
         request.setAttribute("reports_count", reports_count);
         request.setAttribute("page", page);

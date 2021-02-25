@@ -35,29 +35,35 @@ public class ReportsCreateServlet extends HttpServlet {
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
+    //新規レポート作成処理
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        //作成者確認のためトークン取得
         String _token = (String)request.getParameter("_token");
         if(_token != null && _token.equals(request.getSession().getId())) {
+
+            //データベース接続
             EntityManager em = DBUtil.createEntityManager();
-
             Report r = new Report();
-
             r.setEmployee((Employee)request.getSession().getAttribute("login_employee"));
-
             Date report_date = new Date(System.currentTimeMillis());
+
+            //JSPからデータ取得
             String rd_str = request.getParameter("report_date");
             if(rd_str != null && !rd_str.equals("")) {
                 report_date = Date.valueOf(request.getParameter("report_date"));
             }
-            r.setReport_date(report_date);
 
+            //入力情報をセット
+            r.setReport_date(report_date);
             r.setTitle(request.getParameter("title"));
             r.setContent(request.getParameter("content"));
-
             Timestamp currentTime = new Timestamp(System.currentTimeMillis());
             r.setCreated_at(currentTime);
             r.setUpdated_at(currentTime);
+            r.setLike_count(0);
 
+            //入力内容に不備があれば、再度入力画面へ
             List<String> errors = ReportValidator.validate(r);
             if(errors.size() > 0) {
                 em.close();
@@ -68,6 +74,8 @@ public class ReportsCreateServlet extends HttpServlet {
 
                 RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/reports/new.jsp");
                 rd.forward(request, response);
+
+            //入力に問題が無ければ、新規登録
             } else {
                 em.getTransaction().begin();
                 em.persist(r);
@@ -79,5 +87,4 @@ public class ReportsCreateServlet extends HttpServlet {
             }
         }
     }
-
 }

@@ -17,18 +17,22 @@ import javax.persistence.Table;
 
 @Table(name = "reports")
 @NamedQueries({
+    //全レポート情報の取得（レポート一覧ページで使用）
     @NamedQuery(
         name = "getAllReports",
         query = "SELECT r FROM Report AS r ORDER BY r.id DESC"
     ),
+    //全レポート件数を取得
     @NamedQuery(
         name = "getReportsCount",
         query = "SELECT COUNT(r) FROM Report AS r"
     ),
+    //ログイン者の作成レポート情報を取得（トップページで使用）
     @NamedQuery(
         name = "getMyAllReports",
         query = "SELECT r FROM Report AS r WHERE r.employee = :employee ORDER BY r.id DESC"
     ),
+    //ログイン者の作成レポート件数を取得（トップページで使用）
     @NamedQuery(
         name = "getMyReportsCount",
         query = "SELECT COUNT(r) FROM Report AS r WHERE r.employee = :employee"
@@ -60,6 +64,9 @@ public class Report {
 
     @Column(name = "updated_at", nullable = false)
     private Timestamp updated_at;
+
+    @Column(name = "like_count", nullable = false)
+    private Long like_count;
 
     public Integer getId() {
         return id;
@@ -115,5 +122,12 @@ public class Report {
 
     public void setUpdated_at(Timestamp updated_at) {
         this.updated_at = updated_at;
+    }
+
+    public long getLike_count() {
+        return like_count;
+    }
+     public void setLike_count(long like_count) {
+         this.like_count = like_count;
     }
 }

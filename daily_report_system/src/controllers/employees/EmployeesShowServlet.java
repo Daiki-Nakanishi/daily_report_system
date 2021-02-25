@@ -31,10 +31,10 @@ public class EmployeesShowServlet extends HttpServlet {
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        //個人従業員情報の取得（個人詳細ページ用）
         EntityManager em = DBUtil.createEntityManager();
-
         Employee e = em.find(Employee.class, Integer.parseInt(request.getParameter("id")));
-
         em.close();
 
         request.setAttribute("employee", e);

@@ -34,14 +34,17 @@ public class EmployeesUpdateServlet extends HttpServlet {
     /**
      * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
      */
+    //従業員情報の更新処理
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        //セッションチェック
         String _token = (String)request.getParameter("_token");
         if(_token != null && _token.equals(request.getSession().getId())) {
-            EntityManager em = DBUtil.createEntityManager();
 
+            EntityManager em = DBUtil.createEntityManager();
             Employee e = em.find(Employee.class, (Integer)(request.getSession().getAttribute("employee_id")));
 
-            // 現在の値と異なる値（社員番号）が入力されていた時、重複チェックを行う
+            //社員番号の重複チェック
             Boolean codeDuplicateCheckFlag = true;
             if(e.getCode().equals(request.getParameter("code"))) {
                 codeDuplicateCheckFlag = false;
@@ -49,12 +52,15 @@ public class EmployeesUpdateServlet extends HttpServlet {
                 e.setCode(request.getParameter("code"));
             }
 
-            // パスワード欄に入力があった時、入力値のチェックを行う
+            //入力欄の内容チェック用変数
             Boolean passwordCheckFlag = true;
             String password = request.getParameter("password");
+
             if(password == null || password.equals("")) {
                 passwordCheckFlag = false;
             } else {
+
+            //更新用データのセット
                 e.setPassword(
                         EncryptUtil.getPasswordEncrypt(
                                 password,
@@ -62,12 +68,12 @@ public class EmployeesUpdateServlet extends HttpServlet {
                                 )
                         );
             }
-
             e.setName(request.getParameter("name"));
             e.setAdmin_flag(Integer.parseInt(request.getParameter("admin_flag")));
             e.setUpdated_at(new Timestamp(System.currentTimeMillis()));
             e.setDelete_flag(0);
 
+            //入力内容にエラー発生の際の処理
             List<String> errors = EmployeeValidator.validate(e, codeDuplicateCheckFlag, passwordCheckFlag);
             if(errors.size() > 0) {
                 em.close();
@@ -78,14 +84,15 @@ public class EmployeesUpdateServlet extends HttpServlet {
 
                 RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/employees/edit.jsp");
                 rd.forward(request, response);
+
+            //不備が無ければそのまま登録処理
             } else {
                 em.getTransaction().begin();
                 em.getTransaction().commit();
                 em.close();
+
                 request.getSession().setAttribute("flush", "更新が完了しました。");
-
                 request.getSession().removeAttribute("employee_id");
-
                 response.sendRedirect(request.getContextPath() + "/employees/index");
             }
         }

@@ -13,18 +13,22 @@ import javax.persistence.Table;
 
 @Table(name = "employees")
 @NamedQueries({
+    //全従業員情報を取得（一覧ページで使用）
     @NamedQuery(
         name = "getAllEmployees",
         query = "SELECT e FROM Employee AS e ORDER BY e.id DESC"
     ),
+    //全従業員件数を取得（一覧ページで使用）
     @NamedQuery(
         name = "getEmployeesCount",
         query = "SELECT COUNT(e) FROM Employee AS e"
     ),
+    //社員番号の重複チェック（従業員情報の作成・更新時に使用）
     @NamedQuery(
         name = "checkRegisteredCode",
         query = "SELECT COUNT(e) FROM Employee AS e WHERE e.code = :code"
     ),
+    //ログイン時の社員番号・パスワードチェック（ログイン処理で使用）
     @NamedQuery(
         name = "checkLoginCodeAndPassword",
         query = "SELECT e FROM Employee AS e WHERE e.delete_flag = 0 AND e.code = :code AND e.password = :pass"

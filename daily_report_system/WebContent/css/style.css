@@ -39,7 +39,11 @@ p {
 
 a {
     text-decoration: none;
-    color: #24738e;
+    color: #1e90ff;
+}
+
+a:hover {
+    text-decoration: underline;
 }
 
 table, tr, th, td {
@@ -76,8 +80,8 @@ button {
     padding-left: 2%;
     padding-bottom: 28px;
     margin-bottom: 15px;
-    color: #155724;
-    background-color: #d4edda;
+    color: #000080;
+    background-color: #cce6ff;
 }
 
 #flush_error {

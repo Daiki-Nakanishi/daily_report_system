@@ -31,13 +31,15 @@ public class ReportsEditServlet extends HttpServlet {
     /**
      * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
      */
+    //レポート内容の変更処理
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+        //データベース接続、該当レポートデータの取得
         EntityManager em = DBUtil.createEntityManager();
-
         Report r = em.find(Report.class, Integer.parseInt(request.getParameter("id")));
-
         em.close();
 
+        //レポート作成者本人であれば、レポート情報をセット
         Employee login_employee = (Employee)request.getSession().getAttribute("login_employee");
         if(r != null && login_employee.getId() == r.getEmployee().getId()) {
             request.setAttribute("report", r);
@@ -45,6 +47,7 @@ public class ReportsEditServlet extends HttpServlet {
             request.getSession().setAttribute("report_id", r.getId());
         }
 
+        //更新処理はJSP経由で別サーブレットへ
         RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/reports/edit.jsp");
         rd.forward(request, response);
     }
